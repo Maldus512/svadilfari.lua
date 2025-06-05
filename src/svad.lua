@@ -31,7 +31,7 @@ local getNinjaTargets = function(ninjaFile)
     return targetLines
 end
 
-local printHelp = function(ninjaFilePath)
+local printHelp = function(commands, ninjaFilePath)
     print("Usage:")
     print("  svad [command|target]")
     print("")
@@ -40,6 +40,9 @@ local printHelp = function(ninjaFilePath)
     print(string.format("  %-15s%s", "configure", "Configure the build"))
     print(string.format("  %-15s%s", "clean", "Clean the build"))
     print(string.format("  %-15s%s", "fullclean", "Delete all configuration files"))
+    for _, command in ipairs(commands) do
+        print(string.format("  %-15s%s", command.name, command.description))
+    end
     print("")
     local targets = getNinjaTargets(ninjaFilePath)
     print(string.format("Ninja targets: %s", table.concat(targets, ", ")))
@@ -56,7 +59,7 @@ local main = function()
                 print(
                     "Svaðilfari, tireless horse that (almost) built the walls of Asgard is now at our service to build some software (with the help of a mercenary from feudal Japan)")
                 print("")
-                printHelp(ninjaFilePath)
+                printHelp(build.commands or {}, ninjaFilePath)
             else
                 if #arg == 0 then
                     if not fileExists(ninjaFilePath) then
@@ -76,7 +79,7 @@ local main = function()
                     local targets = getNinjaTargets(ninjaFilePath)
                     for _, target in ipairs(targets) do
                         if arg[1] == target then
-                            svadilfari.execvp("ninja", "-f", ninjaFilePath, "-t", arg[1])
+                            svadilfari.execvp("ninja", "-f", ninjaFilePath, arg[1])
                         end
                     end
 
@@ -88,7 +91,7 @@ local main = function()
         end
     else
         print("Could not open build.lua!")
-        print(status)
+        print(status, build)
     end
 end
 
