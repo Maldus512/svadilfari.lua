@@ -1,0 +1,9 @@
+.env
+.luaenv
+.cache
+.luarocks
+svadilfari
+.ninja_deps
+.ninja_log
+*.o
+*.so
