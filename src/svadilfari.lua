@@ -110,9 +110,11 @@ return {
             end)
         end
 
+        ---@alias BuildArgs {inputs: string[]?, target: (string | fun(string): string), implicit: string[]?, variables: {[string]: string}?} | string
+
         ---Dependency graph edge
         ---@param ruleName string
-        ---@param args {inputs: string[]?, target: (string | fun(string): string), implicit: string[]?, variables: {[string]: string}?} | string
+        ---@param args BuildArgs
         ---@return string
         local build = function(ruleName, args)
             local target = nil
@@ -149,7 +151,7 @@ return {
 
         ---Create a ninja rule
         ---@param args table | string
-        ---@return fun(args: table): string
+        ---@return fun(args: BuildArgs): string
         local rule = function(args)
             if type(args) == "string" then
                 args = { command = args }
@@ -202,7 +204,6 @@ return {
             self.file:write("default " .. target .. "\n")
         end
 
-
         ---Finish up the configuration
         local export = function()
             if args.buildFolder ~= nil then
@@ -234,6 +235,16 @@ return {
                 build("phony", { inputs = { value }, target = key })
             end
         })
+
+        -- C specific configuration
+
+        ---C compilation rule
+        ---@param args {compiler: string, deps: string?, includes: string[]}
+        local compile = function(args)
+            assert(type(args.compiler) == "string", "The compiler command must be a string, not " .. type(args.compiler))
+            assert(type(args.deps) == "string" or type(args.deps) == "nil", "The deps mode must be an optional string, not " .. type(args.deps))
+            
+        end
 
         return {
             variables = variables,
