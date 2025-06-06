@@ -65,12 +65,14 @@ local main = function()
                     if not fileExists(ninjaFilePath) then
                         print("Ninja file " .. ninjaFilePath .. " not found, creating...")
                         local configuration = svadilfari.new { output = build.output, buildFolder = build.buildFolder }
-                        build.configure(configuration).export()
+                        build.configure(configuration)
+                        configuration.export()
                     end
                     svadilfari.execvp("ninja", "-f", ninjaFilePath)
                 elseif arg[1] == "configure" then
                     local configuration = svadilfari.new { output = build.output, buildFolder = build.buildFolder }
-                    build.configure(configuration).export()
+                    build.configure(configuration)
+                    configuration.export()
                 elseif arg[1] == "clean" then
                     svadilfari.execvp("ninja", "-f", ninjaFilePath, "-t", "clean")
                 elseif arg[1] == "fullclean" then
